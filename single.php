@@ -51,6 +51,8 @@ get_header();
                 </div>
             </article>
 
+            <?php get_template_part( 'template-parts/related-posts' ); ?>
+
             <nav class="pagination" aria-label="Post navigation">
                 <?php the_post_navigation(); ?>
             </nav>
