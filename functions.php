@@ -280,3 +280,5 @@ function cab_settings_page() {
     </div>
     <?php
 }
+
+require get_template_directory() . '/inc/premium-features.php';
