@@ -15,6 +15,11 @@
     </section>
 
     <section class="widget">
+        <h2 class="widget-title">Popular Articles</h2>
+        <?php cab_popular_posts_list( 5 ); ?>
+    </section>
+
+    <section class="widget">
         <div class="ad-slot">
             AdSense Placeholder<br>
             Insert your ad code here.
