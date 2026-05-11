@@ -39,6 +39,7 @@ function cab_setup() {
 
     register_nav_menus( array(
         'primary' => esc_html__( 'Primary Menu', 'clean-approval-blog' ),
+        'footer'  => esc_html__( 'Footer Menu', 'clean-approval-blog' ),
     ) );
 }
 add_action( 'after_setup_theme', 'cab_setup' );
@@ -99,3 +100,60 @@ function cab_schema_markup() {
     }
 }
 add_action( 'wp_head', 'cab_schema_markup' );
+
+function cab_open_graph_tags() {
+    if ( is_admin() ) {
+        return;
+    }
+
+    $title       = is_singular() ? get_the_title() : get_bloginfo( 'name' );
+    $description = is_singular() ? wp_strip_all_tags( get_the_excerpt() ) : get_bloginfo( 'description' );
+    $url         = is_singular() ? get_permalink() : home_url( '/' );
+    $image       = '';
+
+    if ( is_singular() && has_post_thumbnail() ) {
+        $image = get_the_post_thumbnail_url( get_the_ID(), 'large' );
+    }
+
+    echo '<meta property="og:type" content="' . esc_attr( is_singular() ? 'article' : 'website' ) . '">' . "\n";
+    echo '<meta property="og:title" content="' . esc_attr( $title ) . '">' . "\n";
+    echo '<meta property="og:description" content="' . esc_attr( $description ) . '">' . "\n";
+    echo '<meta property="og:url" content="' . esc_url( $url ) . '">' . "\n";
+    echo '<meta property="og:site_name" content="' . esc_attr( get_bloginfo( 'name' ) ) . '">' . "\n";
+
+    if ( $image ) {
+        echo '<meta property="og:image" content="' . esc_url( $image ) . '">' . "\n";
+    }
+}
+add_action( 'wp_head', 'cab_open_graph_tags', 5 );
+
+function cab_auto_toc( $content ) {
+    if ( ! is_single() || ! in_the_loop() || ! is_main_query() ) {
+        return $content;
+    }
+
+    if ( false === strpos( $content, '<h2' ) ) {
+        return $content;
+    }
+
+    preg_match_all( '/<h2([^>]*)>(.*?)<\/h2>/i', $content, $matches, PREG_SET_ORDER );
+
+    if ( count( $matches ) < 2 ) {
+        return $content;
+    }
+
+    $toc = '<nav class="cab-toc"><strong>' . esc_html__( 'Table of Contents', 'clean-approval-blog' ) . '</strong><ol>';
+
+    foreach ( $matches as $index => $match ) {
+        $heading_text = wp_strip_all_tags( $match[2] );
+        $anchor       = 'section-' . ( $index + 1 );
+        $replacement  = '<h2 id="' . esc_attr( $anchor ) . '"' . $match[1] . '>' . $match[2] . '</h2>';
+        $content      = str_replace( $match[0], $replacement, $content );
+        $toc         .= '<li><a href="#' . esc_attr( $anchor ) . '">' . esc_html( $heading_text ) . '</a></li>';
+    }
+
+    $toc .= '</ol></nav>';
+
+    return $toc . $content;
+}
+add_filter( 'the_content', 'cab_auto_toc' );
