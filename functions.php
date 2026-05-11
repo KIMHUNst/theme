@@ -200,3 +200,83 @@ function cab_popular_posts_list( $limit = 5 ) {
 
     wp_reset_postdata();
 }
+
+function cab_allowed_ad_html() {
+    return array(
+        'script' => array(
+            'async'          => true,
+            'crossorigin'    => true,
+            'src'            => true,
+            'data-ad-client' => true,
+            'data-ad-slot'   => true,
+        ),
+        'ins' => array(
+            'class'          => true,
+            'style'          => true,
+            'data-ad-client' => true,
+            'data-ad-slot'   => true,
+            'data-ad-format' => true,
+            'data-full-width-responsive' => true,
+        ),
+    );
+}
+
+function cab_render_ad_slot( $option_key, $fallback = '' ) {
+    $ad_code = get_option( $option_key, '' );
+
+    if ( $ad_code ) {
+        echo '<div class="ad-slot ad-live">' . wp_kses( $ad_code, cab_allowed_ad_html() ) . '</div>';
+        return;
+    }
+
+    echo '<div class="ad-slot">' . esc_html( $fallback ) . '</div>';
+}
+
+function cab_admin_menu() {
+    add_theme_page(
+        esc_html__( 'Clean Approval Settings', 'clean-approval-blog' ),
+        esc_html__( 'Theme Ads', 'clean-approval-blog' ),
+        'manage_options',
+        'cab-theme-settings',
+        'cab_settings_page'
+    );
+}
+add_action( 'admin_menu', 'cab_admin_menu' );
+
+function cab_register_settings() {
+    register_setting( 'cab_settings_group', 'cab_ad_before_content', array( 'sanitize_callback' => 'cab_sanitize_ad_code' ) );
+    register_setting( 'cab_settings_group', 'cab_ad_after_content', array( 'sanitize_callback' => 'cab_sanitize_ad_code' ) );
+    register_setting( 'cab_settings_group', 'cab_ad_sidebar', array( 'sanitize_callback' => 'cab_sanitize_ad_code' ) );
+}
+add_action( 'admin_init', 'cab_register_settings' );
+
+function cab_sanitize_ad_code( $input ) {
+    return wp_kses( $input, cab_allowed_ad_html() );
+}
+
+function cab_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1><?php esc_html_e( 'Clean Approval Blog Ad Settings', 'clean-approval-blog' ); ?></h1>
+        <p><?php esc_html_e( 'Paste your AdSense ad snippets below. Leave empty to show placeholders.', 'clean-approval-blog' ); ?></p>
+        <form method="post" action="options.php">
+            <?php settings_fields( 'cab_settings_group' ); ?>
+            <table class="form-table" role="presentation">
+                <tr>
+                    <th scope="row"><label for="cab_ad_before_content">Before Content Ad</label></th>
+                    <td><textarea id="cab_ad_before_content" name="cab_ad_before_content" rows="6" class="large-text code"><?php echo esc_textarea( get_option( 'cab_ad_before_content', '' ) ); ?></textarea></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="cab_ad_after_content">After Content Ad</label></th>
+                    <td><textarea id="cab_ad_after_content" name="cab_ad_after_content" rows="6" class="large-text code"><?php echo esc_textarea( get_option( 'cab_ad_after_content', '' ) ); ?></textarea></td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="cab_ad_sidebar">Sidebar Ad</label></th>
+                    <td><textarea id="cab_ad_sidebar" name="cab_ad_sidebar" rows="6" class="large-text code"><?php echo esc_textarea( get_option( 'cab_ad_sidebar', '' ) ); ?></textarea></td>
+                </tr>
+            </table>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
