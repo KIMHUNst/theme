@@ -64,6 +64,7 @@ add_action( 'widgets_init', 'cab_widgets_init' );
 
 function cab_scripts() {
     wp_enqueue_style( 'clean-approval-blog-style', get_stylesheet_uri(), array(), wp_get_theme()->get( 'Version' ) );
+    wp_enqueue_script( 'clean-approval-blog-script', get_template_directory_uri() . '/assets/js/theme.js', array(), wp_get_theme()->get( 'Version' ), true );
 }
 add_action( 'wp_enqueue_scripts', 'cab_scripts' );
 
@@ -157,3 +158,45 @@ function cab_auto_toc( $content ) {
     return $toc . $content;
 }
 add_filter( 'the_content', 'cab_auto_toc' );
+
+function cab_track_post_views() {
+    if ( ! is_single() || is_user_logged_in() ) {
+        return;
+    }
+
+    $post_id = get_the_ID();
+    $views   = (int) get_post_meta( $post_id, '_cab_post_views', true );
+
+    update_post_meta( $post_id, '_cab_post_views', $views + 1 );
+}
+add_action( 'wp_head', 'cab_track_post_views' );
+
+function cab_get_post_views( $post_id = null ) {
+    $post_id = $post_id ? $post_id : get_the_ID();
+    $views   = (int) get_post_meta( $post_id, '_cab_post_views', true );
+
+    return number_format_i18n( $views );
+}
+
+function cab_popular_posts_list( $limit = 5 ) {
+    $popular = new WP_Query( array(
+        'posts_per_page'      => absint( $limit ),
+        'meta_key'            => '_cab_post_views',
+        'orderby'             => 'meta_value_num',
+        'order'               => 'DESC',
+        'ignore_sticky_posts' => true,
+    ) );
+
+    if ( ! $popular->have_posts() ) {
+        return;
+    }
+
+    echo '<ol class="cab-popular-posts">';
+    while ( $popular->have_posts() ) {
+        $popular->the_post();
+        echo '<li><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a><span>' . esc_html( cab_get_post_views() ) . ' views</span></li>';
+    }
+    echo '</ol>';
+
+    wp_reset_postdata();
+}
