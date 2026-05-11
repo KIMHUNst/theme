@@ -3,14 +3,7 @@ Theme Name: Clean Approval Blog
 Theme URI: https://github.com/KIMHUNst/theme
 Author: KIMHUNst
 Description: Lightweight, SEO-friendly WordPress theme for informational blogs and AdSense approval preparation.
-Version: 1.1.0
-Requires at least: 6.0
-Tested up to: 6.5
-Requires PHP: 7.4
-License: GNU General Public License v2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: clean-approval-blog
-Tags: blog, custom-logo, featured-images, one-column, right-sidebar, responsive-layout
+Version: 1.2.0
 */
 
 :root {
@@ -23,6 +16,15 @@ Tags: blog, custom-logo, featured-images, one-column, right-sidebar, responsive-
   --cab-max: 1120px;
 }
 
+.cab-darkmode {
+  --cab-bg: #0f172a;
+  --cab-text: #f8fafc;
+  --cab-muted: #94a3b8;
+  --cab-border: #1e293b;
+  --cab-soft: #111827;
+  --cab-accent: #60a5fa;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -32,6 +34,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 17px;
   line-height: 1.75;
+  transition: background .25s ease, color .25s ease;
 }
 
 a { color: var(--cab-accent); text-decoration: none; }
@@ -43,7 +46,7 @@ img { max-width: 100%; height: auto; }
   top: 0;
   z-index: 100;
   border-bottom: 1px solid var(--cab-border);
-  background: rgba(255,255,255,0.92);
+  background: color-mix(in srgb, var(--cab-bg) 88%, transparent);
   backdrop-filter: blur(10px);
 }
 
@@ -58,6 +61,23 @@ img { max-width: 100%; height: auto; }
   justify-content: space-between;
   gap: 24px;
   padding: 22px 0;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.darkmode-toggle {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--cab-border);
+  background: var(--cab-soft);
+  color: var(--cab-text);
+  cursor: pointer;
+  font-size: 18px;
 }
 
 .site-branding a {
@@ -96,172 +116,71 @@ img { max-width: 100%; height: auto; }
 .content-area { min-width: 0; }
 .post-grid { display: grid; gap: 24px; }
 
-.post-card {
+.post-card,
+.widget,
+.related-posts,
+.comments-area {
   border: 1px solid var(--cab-border);
   border-radius: 20px;
-  background: #fff;
+  background: var(--cab-bg);
   overflow: hidden;
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.post-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(0,0,0,.05);
 }
 
 .post-card-body { padding: 24px; }
 
-.entry-title {
-  margin: 0 0 12px;
-  font-size: clamp(28px, 4vw, 44px);
-  line-height: 1.2;
-}
-
-.post-card .entry-title {
-  font-size: clamp(23px, 3vw, 32px);
-}
-
-.entry-title a { color: var(--cab-text); }
-.entry-meta, .entry-footer {
-  color: var(--cab-muted);
-  font-size: 14px;
-}
-
-.entry-content {
-  margin-top: 24px;
-}
-
-.entry-content h2,
-.entry-content h3 {
-  line-height: 1.35;
-  margin-top: 2em;
-}
-
-.entry-content p {
-  margin: 0 0 1.25em;
-}
-
-.entry-content blockquote {
-  margin: 2em 0;
-  padding: 18px 22px;
-  border-left: 4px solid var(--cab-accent);
-  background: var(--cab-soft);
-  border-radius: 12px;
-}
-
-.entry-content code {
-  background: #f3f4f6;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-
-.entry-content ul,
-.entry-content ol {
-  padding-left: 1.4em;
-}
-
-.featured-image {
-  margin: 24px 0;
-  border-radius: 18px;
-  overflow: hidden;
-}
-
-.read-more {
-  display: inline-block;
-  margin-top: 10px;
-  font-weight: 700;
-}
-
-.widget-area {
-  display: grid;
-  gap: 22px;
-  align-content: start;
-}
-
-.widget {
+.cab-toc {
+  margin-bottom: 32px;
+  padding: 20px;
   border: 1px solid var(--cab-border);
-  border-radius: 18px;
-  padding: 22px;
+  border-radius: 16px;
   background: var(--cab-soft);
 }
 
-.widget-title {
-  margin-top: 0;
+.cab-toc ol {
+  margin: 12px 0 0;
+  padding-left: 18px;
+}
+
+.related-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.related-card {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--cab-border);
+}
+
+.related-card:last-child {
+  border-bottom: none;
+}
+
+.related-card h3 {
+  margin: 12px 0 8px;
   font-size: 18px;
 }
 
-.search-form {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
+.cab-popular-posts {
+  display: grid;
+  gap: 12px;
+  padding-left: 18px;
 }
 
-.search-field {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid var(--cab-border);
-  border-radius: 12px;
-}
-
-.search-submit {
-  border: none;
-  background: var(--cab-accent);
-  color: #fff;
-  padding: 12px 18px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.ad-slot {
-  margin: 28px 0;
-  padding: 18px;
-  border: 1px dashed var(--cab-border);
-  border-radius: 14px;
+.cab-popular-posts li span {
+  display: block;
   color: var(--cab-muted);
-  text-align: center;
-  font-size: 14px;
-  background: var(--cab-soft);
-}
-
-.pagination { margin-top: 32px; }
-
-.nav-links {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.page-numbers {
-  border: 1px solid var(--cab-border);
-  padding: 8px 12px;
-  border-radius: 10px;
-}
-
-.page-numbers.current {
-  background: var(--cab-text);
-  color: #fff;
-}
-
-.site-footer {
-  border-top: 1px solid var(--cab-border);
-  color: var(--cab-muted);
-}
-
-.footer-inner {
-  padding: 28px 0;
-  font-size: 14px;
-}
-
-.screen-reader-text {
-  position: absolute;
-  left: -9999px;
+  font-size: 13px;
 }
 
 @media (max-width: 860px) {
   .header-inner {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .main-navigation ul {
