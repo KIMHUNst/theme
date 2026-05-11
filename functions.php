@@ -21,6 +21,7 @@ function cab_setup() {
         'flex-height' => true,
         'flex-width'  => true,
     ) );
+
     add_theme_support( 'html5', array(
         'search-form',
         'comment-form',
@@ -30,6 +31,11 @@ function cab_setup() {
         'style',
         'script',
     ) );
+
+    add_theme_support( 'custom-line-height' );
+    add_theme_support( 'responsive-embeds' );
+    add_theme_support( 'wp-block-styles' );
+    add_theme_support( 'align-wide' );
 
     register_nav_menus( array(
         'primary' => esc_html__( 'Primary Menu', 'clean-approval-blog' ),
@@ -62,6 +68,7 @@ add_action( 'wp_enqueue_scripts', 'cab_scripts' );
 
 function cab_posted_on() {
     $time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
     if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
         $time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated" datetime="%3$s">%4$s</time>';
     }
@@ -79,7 +86,16 @@ function cab_posted_on() {
 
 function cab_categories() {
     $categories = get_the_category_list( esc_html__( ', ', 'clean-approval-blog' ) );
+
     if ( $categories ) {
         echo '<span class="cat-links"> · ' . wp_kses_post( $categories ) . '</span>';
     }
 }
+
+function cab_schema_markup() {
+    if ( is_single() ) {
+        echo '<meta itemprop="author" content="' . esc_attr( get_the_author() ) . '">';
+        echo '<meta itemprop="datePublished" content="' . esc_attr( get_the_date( DATE_W3C ) ) . '">';
+    }
+}
+add_action( 'wp_head', 'cab_schema_markup' );
