@@ -7,6 +7,16 @@
 ?>
 <footer class="site-footer">
     <div class="footer-inner">
+        <nav class="footer-navigation" aria-label="Footer Menu">
+            <?php
+            wp_nav_menu( array(
+                'theme_location' => 'footer',
+                'container'      => false,
+                'fallback_cb'    => false,
+            ) );
+            ?>
+        </nav>
+
         <p>
             © <?php echo esc_html( date_i18n( 'Y' ) ); ?>
             <?php bloginfo( 'name' ); ?>.
