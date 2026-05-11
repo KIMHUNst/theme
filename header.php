@@ -32,14 +32,20 @@
             </div>
         </div>
 
-        <nav class="main-navigation" aria-label="Primary Menu">
-            <?php
-            wp_nav_menu( array(
-                'theme_location' => 'primary',
-                'container'      => false,
-                'fallback_cb'    => false,
-            ) );
-            ?>
-        </nav>
+        <div class="header-actions">
+            <nav class="main-navigation" aria-label="Primary Menu">
+                <?php
+                wp_nav_menu( array(
+                    'theme_location' => 'primary',
+                    'container'      => false,
+                    'fallback_cb'    => false,
+                ) );
+                ?>
+            </nav>
+
+            <button class="darkmode-toggle" type="button" data-darkmode-toggle aria-label="Toggle dark mode">
+                ☾
+            </button>
+        </div>
     </div>
 </header>
