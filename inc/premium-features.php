@@ -16,6 +16,8 @@ function cab_premium_assets() {
     ) );
 
     echo '<link rel="manifest" href="' . esc_url( get_template_directory_uri() . '/manifest.json' ) . '">' . "\n";
+    echo '<meta name="theme-color" content="' . esc_attr( get_theme_mod( 'cab_accent_color', '#2563eb' ) ) . '">' . "\n";
+    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
 }
 add_action( 'wp_head', 'cab_premium_assets' );
 
@@ -175,7 +177,7 @@ function cab_cta_shortcode( $atts ) {
         'button'=> 'Learn More',
     ), $atts, 'cab_cta' );
 
-    return '<div class="cab-cta"><h3>' . esc_html( $atts['title'] ) . '</h3><p>' . esc_html( $atts['text'] ) . '</p><a href="' . esc_url( $atts['url'] ) . '" rel="nofollow sponsored">' . esc_html( $atts['button'] ) . '</a></div>';
+    return '<div class="cab-cta"><h3>' . esc_html( $atts['title'] ) . '</h3><p>' . esc_html( $atts['text'] ) . '</p><a data-cab-track="cta" href="' . esc_url( $atts['url'] ) . '" rel="nofollow sponsored">' . esc_html( $atts['button'] ) . '</a></div>';
 }
 add_shortcode( 'cab_cta', 'cab_cta_shortcode' );
 
@@ -199,7 +201,7 @@ function cab_review_box_shortcode( $atts, $content = null ) {
     }
 
     if ( $atts['url'] ) {
-        $html .= '<a class="cab-review-button" href="' . esc_url( $atts['url'] ) . '" rel="nofollow sponsored">View Deal</a>';
+        $html .= '<a data-cab-track="review" class="cab-review-button" href="' . esc_url( $atts['url'] ) . '" rel="nofollow sponsored">View Deal</a>';
     }
 
     $html .= '</div>';
@@ -208,6 +210,81 @@ function cab_review_box_shortcode( $atts, $content = null ) {
 add_shortcode( 'cab_review', 'cab_review_box_shortcode' );
 
 function cab_newsletter_shortcode() {
-    return '<form class="cab-newsletter" method="post"><h3>Get Useful Updates</h3><p>Subscribe for practical guides and fresh articles.</p><input type="email" name="cab_email" placeholder="you@example.com" required><button type="submit">Subscribe</button></form>';
+    return '<form class="cab-newsletter" method="post"><h3>Get Useful Updates</h3><p>Subscribe for practical guides and fresh articles.</p><input type="hidden" name="cab_newsletter_nonce" value="' . esc_attr( wp_create_nonce( 'cab_newsletter' ) ) . '"><input type="email" name="cab_email" placeholder="you@example.com" required><button type="submit">Subscribe</button></form>';
 }
 add_shortcode( 'cab_newsletter', 'cab_newsletter_shortcode' );
+
+function cab_handle_newsletter_submit() {
+    if ( empty( $_POST['cab_email'] ) || empty( $_POST['cab_newsletter_nonce'] ) ) {
+        return;
+    }
+
+    if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['cab_newsletter_nonce'] ) ), 'cab_newsletter' ) ) {
+        return;
+    }
+
+    $email = sanitize_email( wp_unslash( $_POST['cab_email'] ) );
+
+    if ( ! is_email( $email ) ) {
+        return;
+    }
+
+    $subscribers = get_option( 'cab_newsletter_subscribers', array() );
+    if ( ! in_array( $email, $subscribers, true ) ) {
+        $subscribers[] = $email;
+        update_option( 'cab_newsletter_subscribers', $subscribers, false );
+    }
+}
+add_action( 'init', 'cab_handle_newsletter_submit' );
+
+function cab_bookmark_button_shortcode() {
+    if ( ! is_singular() ) {
+        return '';
+    }
+
+    return '<button class="cab-bookmark" data-bookmark-id="' . esc_attr( get_the_ID() ) . '">☆ Bookmark</button>';
+}
+add_shortcode( 'cab_bookmark', 'cab_bookmark_button_shortcode' );
+
+function cab_internal_links_shortcode( $atts ) {
+    $atts = shortcode_atts( array( 'limit' => 5 ), $atts, 'cab_internal_links' );
+    $query = new WP_Query( array(
+        'posts_per_page'      => absint( $atts['limit'] ),
+        'post__not_in'        => is_singular() ? array( get_the_ID() ) : array(),
+        'orderby'             => 'rand',
+        'ignore_sticky_posts' => true,
+    ) );
+
+    if ( ! $query->have_posts() ) {
+        return '';
+    }
+
+    $html = '<div class="cab-internal-links"><strong>Recommended Reading</strong><ul>';
+    while ( $query->have_posts() ) {
+        $query->the_post();
+        $html .= '<li><a href="' . esc_url( get_permalink() ) . '">' . esc_html( get_the_title() ) . '</a></li>';
+    }
+    $html .= '</ul></div>';
+    wp_reset_postdata();
+    return $html;
+}
+add_shortcode( 'cab_internal_links', 'cab_internal_links_shortcode' );
+
+function cab_track_click() {
+    check_ajax_referer( 'cab_ajax_nonce', 'nonce' );
+    $type = isset( $_POST['type'] ) ? sanitize_key( wp_unslash( $_POST['type'] ) ) : 'unknown';
+    $stats = get_option( 'cab_click_stats', array() );
+    $stats[ $type ] = isset( $stats[ $type ] ) ? (int) $stats[ $type ] + 1 : 1;
+    update_option( 'cab_click_stats', $stats, false );
+    wp_send_json_success( $stats );
+}
+add_action( 'wp_ajax_cab_track_click', 'cab_track_click' );
+add_action( 'wp_ajax_nopriv_cab_track_click', 'cab_track_click' );
+
+function cab_defer_noncritical_scripts( $tag, $handle ) {
+    if ( 'clean-approval-blog-script' === $handle ) {
+        return str_replace( ' src', ' defer src', $tag );
+    }
+    return $tag;
+}
+add_filter( 'script_loader_tag', 'cab_defer_noncritical_scripts', 10, 2 );
