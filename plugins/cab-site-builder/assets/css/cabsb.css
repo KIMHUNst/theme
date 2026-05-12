@@ -1,0 +1,123 @@
+:root {
+    --cabsb-accent: #2563eb;
+    --cabsb-radius: 18px;
+}
+
+.cabsb-container {
+    width: min(100%, var(--cabsb-container, 1200px));
+    margin-inline: auto;
+    padding-inline: 20px;
+}
+
+.cabsb-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 24px;
+    border-radius: var(--cabsb-radius);
+    text-decoration: none;
+    font-weight: 600;
+    transition: .25s ease;
+}
+
+.cabsb-button-primary {
+    background: var(--cabsb-accent);
+    color: #fff;
+}
+
+.cabsb-button:hover {
+    transform: translateY(-2px);
+}
+
+.cabsb-hero {
+    padding: 120px 0;
+    text-align: center;
+}
+
+.cabsb-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.cabsb-popup-overlay.active {
+    display: flex;
+}
+
+.cabsb-popup-box {
+    width: min(92%, 560px);
+    background: #fff;
+    border-radius: 28px;
+    padding: 36px;
+    position: relative;
+    box-shadow: 0 25px 80px rgba(0,0,0,.25);
+}
+
+.cabsb-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    border: 0;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.cabsb-sticky-cta {
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #111827;
+    color: #fff;
+    border-radius: 999px;
+    padding: 14px 20px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    z-index: 9999;
+    box-shadow: 0 15px 50px rgba(0,0,0,.25);
+}
+
+.cabsb-sticky-cta a {
+    background: var(--cabsb-accent);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 999px;
+    text-decoration: none;
+}
+
+.cabsb-offcanvas {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 360px;
+    height: 100vh;
+    background: #fff;
+    z-index: 99999;
+    transition: .3s ease;
+    padding: 32px;
+    overflow-y: auto;
+    box-shadow: -10px 0 40px rgba(0,0,0,.15);
+}
+
+.cabsb-offcanvas.active {
+    right: 0;
+}
+
+.cabsb-offcanvas-close {
+    border: 0;
+    background: transparent;
+    font-size: 30px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.cabsb-element {
+    position: relative;
+    z-index: 2;
+}
