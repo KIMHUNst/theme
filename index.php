@@ -30,6 +30,7 @@ get_header();
                                 <div class="entry-meta">
                                     <?php cab_posted_on(); ?>
                                     <?php cab_categories(); ?>
+                                    <span class="post-views"> · <?php echo esc_html( cab_get_post_views() ); ?> views</span>
                                 </div>
                             </header>
 
@@ -45,9 +46,17 @@ get_header();
                 <?php endwhile; ?>
             </div>
 
-            <div class="pagination">
-                <?php the_posts_pagination(); ?>
-            </div>
+            <?php if ( get_theme_mod( 'cab_enable_infinite_scroll', true ) ) : ?>
+                <div class="cab-load-more-wrap">
+                    <button class="cab-load-more" data-load-more>
+                        Load More Articles
+                    </button>
+                </div>
+            <?php else : ?>
+                <div class="pagination">
+                    <?php the_posts_pagination(); ?>
+                </div>
+            <?php endif; ?>
 
         <?php else : ?>
             <article class="post-card">
