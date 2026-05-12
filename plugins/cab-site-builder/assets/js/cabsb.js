@@ -37,4 +37,23 @@ document.addEventListener('DOMContentLoaded', function () {
             offcanvas.classList.remove('active');
         });
     }
+
+    const revealItems = document.querySelectorAll('.cabsb-reveal');
+
+    if ('IntersectionObserver' in window && revealItems.length) {
+        const observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.12
+        });
+
+        revealItems.forEach(function (item) {
+            observer.observe(item);
+        });
+    }
 });
