@@ -2,8 +2,8 @@
 /**
  * Plugin Name: CAB Site Builder
  * Plugin URI: https://github.com/KIMHUNst/theme
- * Description: Lightweight GeneratePress-style site builder plugin with layout controls, typography, colors, hooks, elements, marketing tools, performance options, and reusable blocks.
- * Version: 1.1.0
+ * Description: Lightweight GeneratePress-style site builder plugin with layout controls, typography, colors, hooks, elements, marketing tools, performance options, animations, AI builder, and reusable templates.
+ * Version: 1.2.0
  * Author: KIMHUNst
  * Text Domain: cab-site-builder
  * Requires at least: 6.0
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'CABSB_VERSION', '1.1.0' );
+define( 'CABSB_VERSION', '1.2.0' );
 define( 'CABSB_PATH', plugin_dir_path( __FILE__ ) );
 define( 'CABSB_URL', plugin_dir_url( __FILE__ ) );
 
@@ -28,6 +28,10 @@ require_once CABSB_PATH . 'includes/class-cabsb-layout-builder.php';
 require_once CABSB_PATH . 'includes/class-cabsb-asset-manager.php';
 require_once CABSB_PATH . 'includes/class-cabsb-marketing.php';
 require_once CABSB_PATH . 'includes/class-cabsb-navigation.php';
+require_once CABSB_PATH . 'includes/class-cabsb-ai-builder.php';
+require_once CABSB_PATH . 'includes/class-cabsb-template-library.php';
+require_once CABSB_PATH . 'includes/class-cabsb-animations.php';
+require_once CABSB_PATH . 'includes/class-cabsb-visibility.php';
 require_once CABSB_PATH . 'includes/class-cabsb-plugin.php';
 
 function cabsb_boot() {
