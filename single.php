@@ -17,6 +17,7 @@ get_header();
                         <div class="entry-meta">
                             <?php cab_posted_on(); ?>
                             <?php cab_categories(); ?>
+                            <span class="post-views"> · <?php echo esc_html( cab_get_post_views() ); ?> views</span>
                         </div>
                     </header>
 
@@ -26,9 +27,7 @@ get_header();
                         </div>
                     <?php endif; ?>
 
-                    <div class="ad-slot">
-                        AdSense Placeholder - Before Content
-                    </div>
+                    <?php cab_render_ad_slot( 'cab_ad_before_content', 'AdSense Placeholder - Before Content' ); ?>
 
                     <div class="entry-content">
                         <?php
@@ -41,9 +40,7 @@ get_header();
                         ?>
                     </div>
 
-                    <div class="ad-slot">
-                        AdSense Placeholder - After Content
-                    </div>
+                    <?php cab_render_ad_slot( 'cab_ad_after_content', 'AdSense Placeholder - After Content' ); ?>
 
                     <footer class="entry-footer">
                         <?php the_tags( '<span class="tags-links">Tags: ', ', ', '</span>' ); ?>
