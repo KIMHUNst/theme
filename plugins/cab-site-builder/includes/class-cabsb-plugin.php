@@ -25,6 +25,12 @@ class CABSB_Plugin {
         CABSB_Hooks::init();
         CABSB_Shortcodes::init();
         CABSB_Performance::init();
+        CABSB_Layout_Builder::init();
+        CABSB_Asset_Manager::init();
+        CABSB_Marketing::init();
+        CABSB_Navigation::init();
+        CABSB_AI_Builder::init();
+        CABSB_Template_Library::init();
     }
 
     public function enqueue_assets() {
@@ -66,7 +72,7 @@ class CABSB_Plugin {
                 <div class="card"><h2>Layout</h2><p>Container, sidebar, width, spacing.</p></div>
                 <div class="card"><h2>Typography</h2><p>Fonts, scale, body/headings.</p></div>
                 <div class="card"><h2>Performance</h2><p>CSS/JS optimization and preload.</p></div>
-                <div class="card"><h2>Hooks & Elements</h2><p>Inject dynamic content visually.</p></div>
+                <div class="card"><h2>AI & Templates</h2><p>Generate layouts and reusable sections.</p></div>
             </div>
         </div>
         <?php
